@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Time2Result | Elite Sports Timing & Event Management</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "brand-teal": "#56BEB4",
+                        "brand-purple": "#5F2D8A",
+                        "brand-dark": "#0F172A",
+                        "brand-surface": "#FFFFFF",
+                        "brand-bg": "#F8FAFC",
+                        "text-primary": "#0F172A",
+                        "text-secondary": "#64748B",
+                        "primary-fixed": "#dbe1ff",
+                        "outline-variant": "#cbd5e1",
+                    },
+                    "spacing": { "stack-sm": "8px", "section-gap": "64px", "stack-lg": "24px", "gutter": "24px", "stack-md": "16px" },
+                    "fontFamily": {
+                        "label-lg": ["Inter"], "headline-lg": ["Lexend"], "body-lg": ["Inter"], "label-md": ["Inter"],
+                        "headline-md": ["Lexend"], "display-lg": ["Lexend"], "body-md": ["Inter"], "data-mono": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1; }
+        .hero-gradient { background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(95, 45, 138, 0.85) 100%); }
+        .btn-gradient {
+            background-image: linear-gradient(to right, #56BEB4, #5F2D8A, #56BEB4);
+            color: white; transition: all 0.4s ease; background-size: 200% auto;
+        }
+        .btn-gradient:hover { background-position: right center; box-shadow: 0 10px 20px -10px rgba(95, 45, 138, 0.5); }
+        .text-gradient { background-image: linear-gradient(to right, #56BEB4, #5F2D8A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-link { position: relative; text-decoration: none; padding-bottom: 4px; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 50%;
+            background-color: theme('colors.brand-teal'); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%); border-radius: 2px;
+        }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .hover-lift { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease; }
+        .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -12px rgba(95, 45, 138, 0.15); }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-brand-bg text-text-primary font-body-md overflow-x-hidden">
+
+    <header class="bg-brand-surface/95 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-50">
+        <div class="flex items-center justify-between px-6 h-20 max-w-[1280px] mx-auto">
+            <a href="index.html" class="flex items-center group">
+                <img src="assets/images/logo11 (1).png" alt="Time2Result Logo" class="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/150x40/56BEB4/ffffff?text=Time2Result';" />
+            </a>
+            <nav class="hidden md:flex items-center gap-8 font-lexend text-sm font-medium tracking-normal">
+                <a class="nav-link active text-brand-purple" href="index.html">Home</a>
+                <a class="nav-link text-text-secondary hover:text-brand-teal transition-colors" href="events.html">Events</a>
+                <a class="nav-link text-text-secondary hover:text-brand-teal transition-colors" href="result.html">Results</a>
+                <a class="nav-link text-text-secondary hover:text-brand-teal transition-colors" href="about.html">About</a>
+                <a class="nav-link text-text-secondary hover:text-brand-teal transition-colors" href="services.html">Services</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button class="font-lexend text-sm font-medium text-text-secondary hover:text-brand-purple transition-all active:scale-95">Sign In</button>
+                <button class="btn-gradient px-6 py-2 rounded-lg font-lexend text-sm font-medium active:scale-95 shadow-md">Register</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="relative w-full h-[640px] overflow-hidden bg-brand-dark">
+            <div class="absolute inset-0 z-10 hero-gradient"></div>
+            <img alt="marathon runners" class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-[10s]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbEDQ92W-FF-t8i7gSiedDCj-KhmFP-_PiNy5Mfs7Y9dYho0uJUABKos-4_vK9gdik24K82NZy4o_bJyPs5nDj5J7gsZRPBAF9D6XCt7VRuRFUDyPK-zR0li3SAonpadsgcakzXq6gQWZj0nfkWr4Q9DQjztpvaRDyGfgsf1AhmsRvJymbj4c1SLMpr_Ge05SHow1xJfxrLbdN7hTQ5vaamIfIxabnXJCNS_KEm9B6WsSQCGiEJTcLO1up7gk_Xd0RemQO3YFsKp3R" />
+            <div class="relative z-20 h-full flex flex-col items-center justify-center text-center px-6">
+                <span class="font-label-lg text-brand-teal uppercase tracking-widest font-bold mb-4 block reveal">About Us</span>
+                <h1 class="font-display-lg text-4xl md:text-6xl text-brand-surface mb-stack-md max-w-4xl reveal leading-tight">Time To Result Solutions</h1>
+                <p class="font-body-lg text-brand-surface/90 max-w-4xl reveal delay-100 text-lg md:text-xl leading-relaxed">
+                    Time To Result Solutions provides END to END race timing solutions and event management services in Chennai. We used advanced disposable BIB Tags and Re-usable Tag for Marathon, Cycling, Stadium Run, trail runs, Duathlons, and Triathlon. We assure you that our best service will help the event organizers to the grand success of the event.
+                </p>
+            </div>
+        </section>
+
+        <section class="py-section-gap px-6 max-w-[1280px] mx-auto mt-12">
+            <div class="flex justify-between items-end mb-stack-lg reveal">
+                <div>
+                    <span class="font-label-lg text-gradient uppercase tracking-widest block mb-2 font-bold">Competition Hub</span>
+                    <h2 class="font-headline-lg text-headline-lg text-text-primary">Recent & Live Events</h2>
+                </div>
+                <button onclick="window.location.href='events.html';" class="font-label-lg text-brand-purple flex items-center gap-2 hover:text-brand-teal transition-colors">
+                    View All Events <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                <div class="bg-brand-surface rounded-2xl overflow-hidden border border-outline-variant/50 hover-lift group reveal cursor-pointer" onclick="window.location.href='chennai-marathon.html';">
+                    <div class="h-48 relative overflow-hidden">
+                        <img alt="athletes running" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeNWJzQhWQU3CYTJgc6RXgs3KY9CtobVgV3gH1N69WFKBRfrc5c4Vf6D2CfYKx5p_SyLzF6JYHP34qn4ibCsFSdYpc93Lmx0GSsiMTAc_UP1snejC0vRuP8Mi9v-2ptBoPX1ayXLOq2dZSFo0kIUgIJKEwhxFOTF4Lq7m4FO60NqMLB6FGsf_r2aGklGF0S-IPv0RxwnOrYvjz_1CiSJ_3F9VMg_ZMRHGDhAD6nTv3E3huXlEuCn0u7HtCHdvWC6mZev_6UVdFxBaR" />
+                        <div class="absolute top-4 right-4 btn-gradient px-3 py-1 rounded-full font-label-md flex items-center gap-1 shadow-md">
+                            <span class="material-symbols-outlined filled text-xs animate-pulse">sensors</span> LIVE
+                        </div>
+                    </div>
+                    <div class="p-stack-lg">
+                        <div class="text-text-secondary font-label-md mb-2">March 15, 2024 • Chennai, IND</div>
+                        <h3 class="font-headline-md text-headline-md text-text-primary mb-stack-md group-hover:text-brand-teal transition-colors">Chennai City Marathon</h3>
+                        <div class="flex items-center gap-4 border-t border-slate-100 pt-stack-md">
+                            <button class="flex-1 bg-brand-bg text-text-primary border border-outline-variant/50 hover:border-brand-purple font-label-lg py-3 rounded-lg transition-all active:scale-95 group-hover:bg-brand-purple group-hover:text-white">Event Details</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-brand-surface rounded-2xl overflow-hidden border border-outline-variant/50 hover-lift group reveal delay-100 cursor-pointer" onclick="window.location.href='event-details.html';">
+                    <div class="h-48 relative overflow-hidden">
+                        <img alt="exhausted runner" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_IZn7sOfSlV6aeoTec5FDpks8RW43iTyKtgGFe_BoJY_tPwy6zUAVo5kbGAEm4M1GjpNQfBo9mosbLQ2869Es40ibJkip7EO7uwPuV812_WkE-0fWiy-rdigxeuoFNWe7XzZvG-SyQmwxdjOgaDEnYI0hOmWBrCgQcnbVWTsIQHFsbfV2pJXvNKyjSUro2ftoo36a_Aqm03-0gNY7K_BA1vvwzYqp9_wTlZK3r8xYx01QBRUswpbPc3drVGncjePjJA3gEz1qILiM" />
+                        <div class="absolute top-4 right-4 bg-brand-teal text-brand-surface px-3 py-1 rounded-full font-label-md shadow-md">Registration Open</div>
+                    </div>
+                    <div class="p-stack-lg">
+                        <div class="text-text-secondary font-label-md mb-2">April 02, 2024 • Bangalore, IND</div>
+                        <h3 class="font-headline-md text-headline-md text-text-primary mb-stack-md group-hover:text-brand-teal transition-colors">Southern Stadium Run</h3>
+                        <div class="flex items-center gap-4 border-t border-slate-100 pt-stack-md">
+                            <button class="flex-1 btn-gradient text-white font-label-lg py-3 rounded-lg transition-all active:scale-95">Register Now</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-brand-surface rounded-2xl overflow-hidden border border-outline-variant/50 hover-lift group reveal delay-200 cursor-pointer" onclick="window.location.href='coastal-tri-series.html';">
+                    <div class="h-48 relative overflow-hidden">
+                        <img alt="cycling peloton" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_5ImvLrLp1FD3ZvM4M3UtY0e7gEdQy2OplayzK9VYYowxd2Xrj9SncmBrCqsLEQUflitpDibcpAnR7REzSGK4tyOSXfFCRlCLKhvT_dqqSyGg-hK0jdrG7nIPUPViv-Om8vW5f1zm1P5YRdnQ-Dvf9XXUCo4qSClFtCc25DV99bEzfutZm65vjEF6MlhH5cb0DBcRCCT-VEIptWkyN6QFR3b5Ah-bVNy1XBbmSoaRnsC7vAV90SEQJYP8vCwx350hggvrnM84Iw8A" />
+                        <div class="absolute top-4 right-4 bg-slate-600 text-brand-surface px-3 py-1 rounded-full font-label-md shadow-md">Completed</div>
+                    </div>
+                    <div class="p-stack-lg">
+                        <div class="text-text-secondary font-label-md mb-2">March 08, 2024 • Kerala, IND</div>
+                        <h3 class="font-headline-md text-headline-md text-text-primary mb-stack-md group-hover:text-brand-purple transition-colors">Coastal Tri-Series</h3>
+                        <div class="flex items-center gap-4 border-t border-slate-100 pt-stack-md">
+                            <button class="flex-1 bg-brand-bg text-text-primary border border-outline-variant/50 hover:border-brand-purple font-label-lg py-3 rounded-lg transition-all active:scale-95 group-hover:bg-brand-purple group-hover:text-white">Event Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-section-gap px-6 max-w-[1280px] mx-auto bg-brand-surface border-t border-slate-200">
+            <div class="text-center mb-16 reveal">
+                <span class="font-label-lg text-gradient uppercase tracking-widest block mb-2 font-bold">What We Do</span>
+                <h2 class="font-headline-lg text-display-lg text-text-primary">Our Services</h2>
+                <p class="font-body-lg text-text-secondary mt-4 max-w-2xl mx-auto">Providing a comprehensive, end-to-end suite of timing, data, and management solutions for elite events.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-brand-bg rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30 hover-lift group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Timing Result">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent flex items-end p-6">
+                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                <span class="material-symbols-outlined">timer</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-headline-md text-xl font-bold text-text-primary mb-2 group-hover:text-brand-purple transition-colors">TIMING RESULT & E-CERTIFICATE</h3>
+                        <p class="text-text-secondary text-sm">Precision RFID tracking, instant live results, and automated E-certificates for every participant.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-bg rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30 hover-lift group reveal delay-100">
+                    <div class="h-48 overflow-hidden relative">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Event Production">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent flex items-end p-6">
+                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                <span class="material-symbols-outlined">festival</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-headline-md text-xl font-bold text-text-primary mb-2 group-hover:text-brand-teal transition-colors">Event Day Planning & Production</h3>
+                        <p class="text-text-secondary text-sm">Strategic on-ground support, from timing mats and finish line clocks to stage setups and barricades.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-bg rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30 hover-lift group reveal delay-200">
+                    <div class="h-48 overflow-hidden relative">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Registration">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent flex items-end p-6">
+                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                <span class="material-symbols-outlined">how_to_reg</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-headline-md text-xl font-bold text-text-primary mb-2 group-hover:text-brand-purple transition-colors">Registration & Race Photo</h3>
+                        <p class="text-text-secondary text-sm">End-to-end data management systems and integrated professional race photography.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-bg rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30 hover-lift group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Expo Management">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent flex items-end p-6">
+                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                <span class="material-symbols-outlined">storefront</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-headline-md text-xl font-bold text-text-primary mb-2 group-hover:text-brand-teal transition-colors">Event & BIB EXPO Management</h3>
+                        <p class="text-text-secondary text-sm">Flawless pre-race logistics ensuring runners get their gear, BIBs, and essential info easily.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-bg rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30 hover-lift group reveal delay-100">
+                    <div class="h-48 overflow-hidden relative">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Manufacturing">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent flex items-end p-6">
+                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                <span class="material-symbols-outlined">factory</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-headline-md text-xl font-bold text-text-primary mb-2 group-hover:text-brand-purple transition-colors">Manufacturing</h3>
+                        <p class="text-text-secondary text-sm">In-house production of customized dry-fit T-shirts, premium finisher medals, and promotional bags.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-bg rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30 hover-lift group reveal delay-200">
+                    <div class="h-48 overflow-hidden relative">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Communication">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent flex items-end p-6">
+                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                <span class="material-symbols-outlined">campaign</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-headline-md text-xl font-bold text-text-primary mb-2 group-hover:text-brand-teal transition-colors">Live & Instant Communication</h3>
+                        <p class="text-text-secondary text-sm">Immediate participant notifications via SMS, Email, and WhatsApp for results and race alerts.</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-bg rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30 hover-lift group reveal md:col-span-2 lg:col-span-3 flex flex-col md:flex-row">
+                    <div class="h-48 md:h-auto md:w-1/2 relative overflow-hidden">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Marketing">
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand-dark/80 to-transparent flex items-center p-8">
+                            <div class="w-16 h-16 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                                <span class="material-symbols-outlined text-3xl">rocket_launch</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-8 md:p-12 md:w-1/2 flex flex-col justify-center">
+                        <h3 class="font-headline-md text-2xl font-bold text-text-primary mb-4 group-hover:text-brand-purple transition-colors">Marketing & Branding</h3>
+                        <p class="text-text-secondary text-base leading-relaxed">
+                            Amplify your event's reach with our professional marketing team. We formulate route branding, extensive venue advertising, and highly engaging Social Media Marketing campaigns to maximize your participant registrations and elevate your event's profile.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-section-gap px-6 bg-brand-dark relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            <div class="max-w-[1280px] mx-auto relative z-10">
+                 <div class="text-center mb-16 reveal">
+                    <span class="font-label-lg text-brand-teal uppercase tracking-widest block mb-2 font-bold">Event Gallery</span>
+                    <h2 class="font-headline-lg text-display-lg text-white mb-4">Capturing The Glory</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                     <div class="overflow-hidden rounded-xl h-48 md:h-64 reveal hover-lift border border-slate-700">
+                         <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Event photo 1" />
+                     </div>
+                     <div class="overflow-hidden rounded-xl h-48 md:h-64 reveal delay-100 hover-lift border border-slate-700">
+                         <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Event photo 2" />
+                     </div>
+                     <div class="overflow-hidden rounded-xl h-48 md:h-64 reveal delay-200 hover-lift border border-slate-700">
+                         <img src="https://images.unsplash.com/photo-1502224562085-639556652f33?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Event photo 3" />
+                     </div>
+                     <div class="overflow-hidden rounded-xl h-48 md:h-64 reveal delay-300 hover-lift border border-slate-700">
+                         <img src="https://images.unsplash.com/photo-1530143311094-34d807799e8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Event photo 4" />
+                     </div>
+                </div>
+                
+                <div class="text-center mt-12 reveal">
+                    <button onclick="window.location.href='gallery.html';" class="btn-gradient text-white font-bold px-10 py-4 rounded-full active:scale-95 transition-all duration-300">
+                        View All Photos
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-section-gap px-6 max-w-[1280px] mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <span class="font-label-lg text-gradient uppercase tracking-widest block mb-2 font-bold">Why Time2Result</span>
+                <h2 class="font-headline-lg text-display-lg text-text-primary mb-4">Why Choose Us</h2>
+                <p class="font-body-lg text-text-secondary">Delivering world-class sports timing solutions for marathons, cycling, and endurance events. Trusted by organizers and loved by athletes.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="space-y-8">
+                    <div class="bg-brand-surface p-8 rounded-2xl shadow-sm border border-outline-variant/30 text-center lg:text-right reveal hover-lift group">
+                        <span class="material-symbols-outlined text-4xl text-brand-purple mb-4 block group-hover:scale-110 transition-transform">bolt</span>
+                        <h3 class="font-headline-md text-text-primary mb-3 font-bold">Real-Time Results</h3>
+                        <p class="text-text-secondary">Athletes and spectators access live leaderboards, mobile updates, and instant finish times.</p>
+                    </div>
+                    <div class="bg-brand-surface p-8 rounded-2xl shadow-sm border border-outline-variant/30 text-center lg:text-right reveal delay-100 hover-lift group">
+                        <span class="material-symbols-outlined text-4xl text-brand-purple mb-4 block group-hover:scale-110 transition-transform">settings</span>
+                        <h3 class="font-headline-md text-text-primary mb-3 font-bold">Scalable Architecture</h3>
+                        <p class="text-text-secondary">From 100 to 100,000+ participants, we flawlessly adapt to events of any size.</p>
+                    </div>
+                </div>
+
+                <div class="hidden lg:block reveal delay-200">
+                    <img src="https://images.unsplash.com/photo-1557685888-2d3621ddf615?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Medals" class="w-full h-[600px] object-cover rounded-[3rem] shadow-2xl border-8 border-brand-surface hover-lift">
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-brand-surface p-8 rounded-2xl shadow-sm border border-outline-variant/30 text-center lg:text-left reveal hover-lift group">
+                        <span class="material-symbols-outlined text-4xl text-brand-teal mb-4 block group-hover:scale-110 transition-transform">done_all</span>
+                        <h3 class="font-headline-md text-text-primary mb-3 font-bold">Unmatched Accuracy</h3>
+                        <p class="text-text-secondary">With advanced RFID chip timing, we ensure 99.9% precision tracking every split.</p>
+                    </div>
+                    <div class="bg-brand-surface p-8 rounded-2xl shadow-sm border border-outline-variant/30 text-center lg:text-left reveal delay-100 hover-lift group">
+                        <span class="material-symbols-outlined text-4xl text-brand-teal mb-4 block group-hover:scale-110 transition-transform">headset_mic</span>
+                        <h3 class="font-headline-md text-text-primary mb-3 font-bold">24/7 Support</h3>
+                        <p class="text-text-secondary">Our expert team provides full technical assistance so you can focus on the race.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-section-gap px-6 bg-brand-bg border-t border-outline-variant/30">
+            <div class="max-w-[1280px] mx-auto">
+                <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+                    <span class="font-label-lg text-gradient uppercase tracking-widest block mb-2 font-bold">Testimonials</span>
+                    <h2 class="font-headline-lg text-display-lg text-text-primary">What Our Clients Say</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-brand-surface p-8 rounded-2xl border border-outline-variant/50 shadow-sm hover-lift reveal">
+                        <div class="text-brand-purple mb-4 flex">
+                            <span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span>
+                        </div>
+                        <h3 class="font-body-lg text-text-primary mb-6 italic">“Time2Result transformed our marathon experience with flawless accuracy and live updates. Our participants loved the instant certificates.”</h3>
+                        <div class="flex items-center gap-4 border-t border-outline-variant/30 pt-4">
+                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center font-bold text-brand-purple">ED</div>
+                            <p class="font-label-lg text-text-secondary uppercase">— Event Director</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-surface p-8 rounded-2xl border border-outline-variant/50 shadow-sm hover-lift reveal delay-100">
+                        <div class="text-brand-teal mb-4 flex">
+                            <span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span>
+                        </div>
+                        <h3 class="font-body-lg text-text-primary mb-6 italic">“Reliable, professional, and innovative. Their venue production and timing made our ultra run smooth and stress-free.”</h3>
+                        <div class="flex items-center gap-4 border-t border-outline-variant/30 pt-4">
+                            <div class="w-10 h-10 rounded-full bg-brand-teal/20 flex items-center justify-center font-bold text-brand-teal">OR</div>
+                            <p class="font-label-lg text-text-secondary uppercase">— Organizer</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-surface p-8 rounded-2xl border border-outline-variant/50 shadow-sm hover-lift reveal delay-200">
+                        <div class="text-brand-purple mb-4 flex">
+                            <span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span><span class="material-symbols-outlined filled">star</span>
+                        </div>
+                        <h3 class="font-body-lg text-text-primary mb-6 italic">“The best timing partner we’ve worked with. The custom medals and t-shirts were fantastic. Absolute pleasure to work with.”</h3>
+                        <div class="flex items-center gap-4 border-t border-outline-variant/30 pt-4">
+                            <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center font-bold text-brand-purple">CR</div>
+                            <p class="font-label-lg text-text-secondary uppercase">— Community Race Organizer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-brand-dark pt-20 pb-8 text-slate-300 mt-auto border-t border-slate-800">
+        <div class="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="flex flex-col gap-6 md:col-span-2">
+                <a href="index.html" class="inline-block hover:opacity-80 transition-opacity">
+                    <img src="assets/images/logo11 (1).png" alt="Time2Result Logo" class="h-14 w-auto object-contain bg-white rounded-lg p-2" onerror="this.onerror=null; this.src='https://placehold.co/200x60/ffffff/004ac6?text=Time2Result';" />
+                </a>
+                <p class="text-slate-400 leading-relaxed max-w-md">
+                    Time To Result Solutions provides END to END race timing solutions and event management services in Chennai. 
+                </p>
+                <div class="flex flex-col gap-2 mt-2 font-medium">
+                    <p class="flex items-start gap-3"><span class="material-symbols-outlined text-brand-teal">location_on</span><span>1st Floor, 12/1, Sangam School Street,<br/>Venkatapuram, Ambattur, Chennai – 53</span></p>
+                    <p class="flex items-center gap-3 mt-2"><span class="material-symbols-outlined text-brand-teal">mail</span><a href="mailto:info@time2result.com" class="hover:text-white transition-colors">info@time2result.com</a></p>
+                    <p class="flex items-center gap-3"><span class="material-symbols-outlined text-brand-teal opacity-0">mail</span><a href="mailto:time2resultindia@gmail.com" class="hover:text-white transition-colors">time2resultindia@gmail.com</a></p>
+                    <p class="flex items-center gap-3 mt-2"><span class="material-symbols-outlined text-brand-teal">phone</span><a href="tel:+919363024240" class="hover:text-white transition-colors">+91 93630 24240</a> <span class="text-slate-600">/</span> <a href="tel:+918248868900" class="hover:text-white transition-colors">+91 82488 68900</a></p>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-bold text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
+                <div class="flex flex-col gap-4 font-medium">
+                    <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="index.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Home</a>
+                    <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="events.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Events</a>
+                    <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="result.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Results</a>
+                    <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="about.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> About Us</a>
+                    <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="services.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Services</a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-lg mb-6 uppercase tracking-wider">Connect With Us</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-purple hover:text-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300" title="Facebook">
+                        <span class="material-symbols-outlined">thumb_up</span>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-teal hover:text-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300" title="Whatsapp">
+                        <span class="material-symbols-outlined">chat</span>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-purple hover:text-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300" title="Instagram">
+                        <span class="material-symbols-outlined">photo_camera</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-[1280px] mx-auto px-6 pt-8 border-t border-slate-800 text-center flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-sm">© 2024 Time To Result Solutions. All Rights Reserved.</p>
+            <div class="flex gap-6 text-sm">
+                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>

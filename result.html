@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Results – TIME2RESULT</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@400,0,0,24" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  :root {
+    --bg-pure: #ffffff;
+    --bg-soft: #F8FAFC;
+    --primary: #5F2D8A;
+    --primary-light: #F3E8FF; 
+    --primary-hover: #4a236c;
+    --secondary: #56BEB4;
+    
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --border: #cbd5e1;
+    
+    --gold: #FFD700;
+    --silver: #C0C0C0;
+    --bronze: #CD7F32;
+    --grad: linear-gradient(135deg, #5F2D8A, #56BEB4);
+    
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 24px rgba(0,0,0,0.12);
+    
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background-color: var(--bg-soft); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+  a { text-decoration: none; color: inherit; }
+  ul { list-style: none; }
+  button { font-family: 'Inter', sans-serif; cursor: pointer; border: none; background: none; }
+  main { flex: 1; }
+
+  /* PAGE TRANSITION */
+  .page-transition { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; opacity: 1; }
+  .page-transition.loaded { opacity: 0; }
+
+  /* --- SECTION 1: FILTER BAR --- */
+  .filter-bar { position: sticky; top: 80px; z-index: 100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; box-shadow: var(--shadow-sm); }
+  .filter-group { display: flex; align-items: center; background: var(--bg-pure); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 16px; transition: var(--transition); flex: 1; min-width: 200px; }
+  .filter-group:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+  .filter-group span { color: var(--text-muted); font-size: 20px; margin-right: 8px; }
+  .filter-group input, .filter-group select { border: none; outline: none; font-size: 15px; color: var(--text-main); width: 100%; background: transparent; padding: 6px 0; font-weight: 500; font-family: 'Inter', sans-serif; }
+  
+  .btn-search { background: var(--primary); color: white; padding: 14px 36px; border-radius: var(--radius-md); font-weight: 600; font-size: 15px; transition: var(--transition); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(95, 45, 138, 0.3); }
+  .btn-search:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(95, 45, 138, 0.4); }
+
+  /* --- MAIN LAYOUT --- */
+  .layout-container { max-width: 1400px; margin: 0 auto; padding: 40px 32px; display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
+  @media (max-width: 1024px) { .layout-container { grid-template-columns: 1fr; } }
+  
+  .section-title { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; font-family: 'Lexend', sans-serif;}
+  .section-subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 32px; font-weight: 500; }
+
+  /* --- SECTION 2: PODIUM --- */
+  .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 24px; margin-bottom: 60px; padding-top: 20px; }
+  .podium-card { background: var(--bg-pure); border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: var(--shadow-md); transition: var(--transition); border: 1px solid var(--border); position: relative; width: 220px; cursor: pointer; }
+  .podium-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+  
+  .podium-card.rank-1 { order: 2; transform: scale(1.1); box-shadow: 0 12px 32px rgba(255, 215, 0, 0.15); border-color: rgba(255, 215, 0, 0.5); z-index: 2; margin: 0 16px; }
+  .podium-card.rank-1:hover { transform: scale(1.1) translateY(-8px); }
+  .podium-card.rank-2 { order: 1; border-top: 4px solid var(--silver); }
+  .podium-card.rank-3 { order: 3; border-top: 4px solid var(--bronze); }
+  .podium-card.rank-1 { border-top: 4px solid var(--gold); }
+
+  .medal-icon { width: 56px; height: 56px; margin: -52px auto 16px; border-radius: 50%; background: var(--bg-pure); display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: var(--shadow-sm); border: 2px solid; }
+  .rank-1 .medal-icon { border-color: var(--gold); box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); }
+  .rank-2 .medal-icon { border-color: var(--silver); }
+  .rank-3 .medal-icon { border-color: var(--bronze); }
+
+  .podium-name { font-weight: 700; font-size: 18px; margin-bottom: 4px; color: var(--text-main); font-family: 'Lexend', sans-serif;}
+  .podium-time { font-weight: 800; font-size: 22px; color: var(--primary); margin: 12px 0 4px; font-family: 'Lexend', sans-serif;}
+  .podium-bib { display: inline-block; padding: 4px 12px; background: var(--bg-soft); border-radius: 50px; font-size: 12px; font-weight: 600; color: var(--text-muted); border: 1px solid var(--border); }
+  .podium-rank { position: absolute; top: 12px; right: 12px; font-size: 14px; font-weight: 800; color: var(--text-muted); opacity: 0.5; }
+
+  @media (max-width: 768px) {
+    .podium-container { flex-direction: column; align-items: center; gap: 40px; }
+    .podium-card { width: 100%; max-width: 300px; order: unset !important; transform: none !important; margin: 0 !important; }
+    .podium-card:hover { transform: translateY(-4px) !important; }
+  }
+
+  /* --- SECTION 3: RESULTS TABLE --- */
+  .table-container { background: var(--bg-pure); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border); overflow-x: auto; margin-bottom: 40px; }
+  table { width: 100%; border-collapse: collapse; text-align: left; }
+  th { background: var(--bg-soft); color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; padding: 18px 24px; white-space: nowrap; border-bottom: 2px solid var(--border); }
+  td { padding: 16px 24px; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 500; color: var(--text-main); white-space: nowrap; }
+  tr { transition: var(--transition); cursor: pointer; }
+  tr:hover { background-color: var(--primary-light); }
+  
+  .td-rank { font-weight: 800; color: var(--text-muted); width: 60px; font-family: 'Lexend', sans-serif;}
+  .td-time { font-weight: 700; color: var(--primary); font-size: 16px; font-family: 'Lexend', sans-serif;}
+  .td-bib { font-family: 'Inter', monospace; font-size: 14px; background: var(--bg-pure); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); font-weight: 600;}
+
+  /* --- SECTION 4: RUNNER DETAIL VIEW --- */
+  .detail-section { background: var(--bg-pure); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border); overflow: hidden; display: none; margin-bottom: 40px; opacity: 0; transform: translateY(20px); transition: opacity 0.4s, transform 0.4s; }
+  .detail-section.active { display: block; opacity: 1; transform: translateY(0); }
+  
+  .detail-header { background: var(--grad); padding: 40px; color: white; display: flex; align-items: center; gap: 24px; position: relative; }
+  .detail-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; transition: var(--transition); }
+  .detail-close:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+  .detail-avatar { width: 84px; height: 84px; border-radius: 50%; background: white; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; box-shadow: 0 4px 20px rgba(0,0,0,0.2); font-family: 'Lexend', sans-serif;}
+  .detail-name { font-size: 36px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; line-height: 1.1; font-family: 'Lexend', sans-serif;}
+  .detail-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+  .detail-tag { background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); }
+
+  .detail-body { padding: 32px; }
+  
+  .rank-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .rank-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; text-align: center; }
+  .rank-card-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .rank-card-val { font-size: 28px; font-weight: 800; color: var(--primary); font-family: 'Lexend', sans-serif;}
+
+  .tabs { display: flex; gap: 12px; border-bottom: 2px solid var(--border); margin-bottom: 24px; overflow-x: auto; }
+  .tab-btn { padding: 12px 24px; font-weight: 600; font-size: 15px; color: var(--text-muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: var(--transition); white-space: nowrap; }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .split-table { width: 100%; border-collapse: collapse; background: var(--bg-pure); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+  .split-table th { background: var(--bg-soft); color: var(--text-muted); padding: 14px 20px; border-bottom: 1px solid var(--border); }
+  .split-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .split-table tr:last-child td { border-bottom: none; }
+  .split-table.main-split tr:last-child td { font-weight: 700; color: var(--primary); background: var(--primary-light); }
+
+  .compare-search-box { display: flex; gap: 12px; margin-bottom: 24px; }
+  .compare-search-box input { flex: 1; padding: 14px 20px; border-radius: 50px; border: 1px solid var(--border); outline: none; font-size: 15px; background: var(--bg-soft); }
+  .compare-search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+  .compare-results-area { display: none; }
+  .compare-results-area.active { display: block; animation: fadeIn 0.4s ease; }
+  .vs-badge { background: var(--primary); color: white; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin: 0 10px; }
+  
+  .action-buttons { display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--border); }
+  .btn-outline { padding: 14px 28px; border: 2px solid var(--border); border-radius: 50px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; color: var(--text-main); transition: var(--transition); background: var(--bg-pure); }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+
+  .sidebar { position: sticky; top: 180px; }
+  .event-card { background: var(--bg-pure); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border); overflow: hidden; }
+  .event-img { height: 180px; background: url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600&q=80') center/cover; position: relative; }
+  .event-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
+  .event-status { position: absolute; top: 16px; right: 16px; background: #E8F5E9; color: #2E7D32; padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2; box-shadow: var(--shadow-sm); }
+  .event-info { padding: 24px; }
+  .event-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; line-height: 1.3; font-family: 'Lexend', sans-serif;}
+  .event-date { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 15px; margin-bottom: 20px; font-weight: 500; }
+  
+  .event-rules { background: var(--bg-soft); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px; border: 1px solid var(--border); }
+  .event-rules h4 { font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; font-weight: 700; letter-spacing: 0.5px; }
+  .event-rules p { font-size: 13px; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .event-rules p::before { content: '✓'; color: var(--primary); font-weight: bold; }
+  
+  .btn-full { width: 100%; display: block; text-align: center; padding: 16px; background: var(--bg-pure); border: 2px solid var(--border); border-radius: var(--radius-md); font-weight: 700; font-size: 15px; transition: var(--transition); color: var(--text-main); cursor: pointer; }
+  .btn-full:hover { background: var(--bg-soft); border-color: var(--text-muted); }
+
+  .share-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 3000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+  .share-modal.active { display: flex; opacity: 1; }
+  .share-content { background: var(--bg-pure); padding: 32px; border-radius: var(--radius-xl); width: 90%; max-width: 400px; transform: translateY(20px); transition: transform 0.3s; text-align: center; box-shadow: var(--shadow-lg); position: relative; }
+  .share-modal.active .share-content { transform: translateY(0); }
+  .share-title { font-size: 20px; font-weight: 800; margin-bottom: 24px; font-family: 'Lexend', sans-serif; }
+  .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .social-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; border: none; background: transparent; transition: transform 0.2s; }
+  .social-btn:hover { transform: scale(1.1); }
+  .social-icon { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: var(--shadow-sm); }
+  .icon-wa { background: #25D366; }
+  .icon-fb { background: #1877F2; }
+  .icon-tw { background: #000000; }
+  .icon-in { background: #0A66C2; }
+  .social-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+  .copy-link-box { display: flex; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+  .copy-link-box input { flex: 1; padding: 12px 16px; border: none; background: transparent; color: var(--text-muted); outline: none; font-size: 13px; }
+  .copy-link-box button { background: var(--primary); color: white; padding: 0 20px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+  .copy-link-box button:hover { background: var(--primary-hover); }
+  .close-share { position: absolute; top: 16px; right: 16px; background: var(--bg-soft); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
+  .close-share:hover { background: var(--border); color: var(--text-main); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+  <div id="page-transition" class="page-transition"></div>
+
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-[1000]">
+      <div class="flex items-center justify-between px-6 h-20 max-w-[1280px] mx-auto">
+          <a href="index.html" class="flex items-center gap-3 group">
+              <img src="assets/images/logo11 (1).png" alt="Time2Result Logo" class="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/150x40/56BEB4/ffffff?text=Time2Result';" />
+          </a>
+          <nav class="hidden md:flex items-center gap-8 font-['Lexend'] text-sm font-medium tracking-normal">
+              <a class="relative text-slate-600 hover:text-[#56BEB4] transition-colors" href="index.html">Home</a>
+              <a class="relative text-slate-600 hover:text-[#56BEB4] transition-colors" href="events.html">Events</a>
+              <a class="relative text-[#5F2D8A] font-bold" href="result.html">Results</a>
+              <a class="relative text-slate-600 hover:text-[#56BEB4] transition-colors" href="about.html">About</a>
+              <a class="relative text-slate-600 hover:text-[#56BEB4] transition-colors" href="services.html">Services</a>
+          </nav>
+      </div>
+  </header>
+
+  <div class="filter-bar" id="filter-bar">
+    <div class="filter-group">
+      <span class="material-symbols-outlined">emoji_events</span>
+      <select id="filter-event" onchange="renderAll()">
+        <option value="Mumbai Marathon 2025">Mumbai Marathon 2025</option>
+        <option value="Delhi Half Marathon">Delhi Half Marathon</option>
+        <option value="Pune Trail Ultra">Pune Trail Ultra</option>
+        <option value="Bengaluru 10K Series">Bengaluru 10K Series</option>
+        <option value="Goa Beach Run">Goa Beach Run</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="material-symbols-outlined">directions_run</span>
+      <select id="filter-category" onchange="renderAll()">
+        <option value="All">All Categories</option>
+        <option value="10K Run">10K Run</option>
+        <option value="Half Marathon">Half Marathon</option>
+        <option value="Full Marathon">Full Marathon</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="material-symbols-outlined">search</span>
+      <input type="text" id="filter-bib" placeholder="Search BIB or Athlete Name..." oninput="renderAll()">
+    </div>
+    <button class="btn-search" onclick="renderAll()">
+      Search
+      <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+    </button>
+  </div>
+
+  <main class="layout-container">
+    <div class="content-area">
+      
+      <div style="margin-bottom: 24px;">
+        <h2 class="section-title">Leaderboard</h2>
+        <p class="section-subtitle" id="leaderboard-subtitle">Overall Top Performers</p>
+      </div>
+
+      <section class="podium-container" id="podium-container"></section>
+
+      <section class="detail-section" id="detail-section">
+        <div class="detail-header">
+          <div class="detail-close" onclick="closeDetails()">
+            <span class="material-symbols-outlined">close</span>
+          </div>
+          <div class="detail-avatar" id="det-avatar">A</div>
+          <div>
+            <div class="detail-name" id="det-name">Athlete Name</div>
+            <div class="detail-tags">
+              <span class="detail-tag" id="det-bib">BIB: 0000</span>
+              <span class="detail-tag" id="det-cat">Category</span>
+              <span class="detail-tag" id="det-gender">Gender</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-body">
+          <div class="rank-cards">
+            <div class="rank-card">
+              <div class="rank-card-title">Overall Rank</div>
+              <div class="rank-card-val" id="det-rank">#1</div>
+            </div>
+            <div class="rank-card">
+              <div class="rank-card-title">Finish Time</div>
+              <div class="rank-card-val" id="det-time">00:00:00</div>
+            </div>
+            <div class="rank-card">
+              <div class="rank-card-title">Avg Pace</div>
+              <div class="rank-card-val" id="det-pace">00:00</div>
+            </div>
+            <div class="rank-card">
+              <div class="rank-card-title">Gender Rank</div>
+              <div class="rank-card-val" id="det-gender-rank">#1</div>
+            </div>
+          </div>
+
+          <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'tab-splits')">Split Timings</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-compare')">Compare</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-info')">Runner Info</button>
+          </div>
+
+          <div id="tab-splits" class="tab-content active">
+            <table class="split-table main-split">
+              <thead>
+                <tr>
+                  <th>Interval</th>
+                  <th>Chip Time</th>
+                  <th>Pace (min/km)</th>
+                  <th>Speed (km/h)</th>
+                </tr>
+              </thead>
+              <tbody id="split-tbody"></tbody>
+            </table>
+          </div>
+
+          <div id="tab-compare" class="tab-content">
+            <div class="compare-search-box">
+              <input type="text" id="compare-search-input" placeholder="Enter another runner's Name or BIB to compare...">
+              <button class="btn-search" onclick="doCompare()" style="padding: 10px 24px;">Compare</button>
+            </div>
+            <div id="compare-error" style="color: #d32f2f; font-size: 13px; margin-bottom: 12px; display:none;">Runner not found in this event. Please check BIB or Name.</div>
+            
+            <div class="compare-results-area" id="compare-results-area">
+              <table class="split-table" style="text-align: center;">
+                <thead>
+                  <tr>
+                    <th style="text-align: left;">Metric</th>
+                    <th id="comp-name-a" style="color:var(--primary); font-weight:800;">Runner A</th>
+                    <th id="comp-name-b" style="color:var(--text-main); font-weight:800;">Runner B</th>
+                  </tr>
+                </thead>
+                <tbody id="compare-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-info" class="tab-content">
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Registration and timing details verified by official timing mats.</p>
+            <table class="split-table" style="max-width: 500px;">
+              <tr><td style="color:var(--text-muted); width: 40%;">Age Category</td><td id="det-age" style="font-weight:700">--</td></tr>
+              <tr><td style="color:var(--text-muted)">Gun Time</td><td id="det-gun" style="font-weight:700">--</td></tr>
+              <tr><td style="color:var(--text-muted)">Club / Team</td><td style="font-weight:700">Independent</td></tr>
+            </table>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-search">
+              <span class="material-symbols-outlined">workspace_premium</span>
+              Download Certificate
+            </button>
+            <button class="btn-outline" onclick="openShareModal()">
+              <span class="material-symbols-outlined">share</span>
+              Share Result
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>BIB No</th>
+              <th>Athlete Name</th>
+              <th>Category</th>
+              <th>Finish Time</th>
+              <th>Pace</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div id="no-results" style="display: none; padding: 60px; text-align: center; color: var(--text-muted);">
+          <span class="material-symbols-outlined" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;">search_off</span>
+          <h3 style="font-family: 'Lexend', sans-serif; font-size: 20px; margin-bottom: 8px; color: var(--text-main);">No runners found</h3>
+          <p>Try adjusting your search criteria or checking the BIB number.</p>
+        </div>
+      </section>
+    </div>
+
+    <aside class="sidebar">
+      <div class="event-card">
+        <div class="event-img">
+          <span class="event-status">Official Results</span>
+        </div>
+        <div class="event-info">
+          <h3 class="event-title" id="sidebar-event-title">Mumbai Marathon 2025</h3>
+          <div class="event-date">
+            <span class="material-symbols-outlined" style="font-size: 20px;">calendar_month</span>
+            <span id="sidebar-event-date">January 19, 2025</span>
+          </div>
+          
+          <div class="event-rules">
+            <h4>Timing Rules</h4>
+            <p>Official ranks are based on Gun Time for Top 3 overall.</p>
+            <p>Age category ranks use Net/Chip Time.</p>
+            <p>Results become official after 48h dispute period.</p>
+          </div>
+          
+          <button class="btn-full" onclick="goToPage('events.html')">View Event Details</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="bg-brand-dark pt-20 pb-8 text-slate-300 mt-auto border-t border-slate-800 w-full">
+    <div class="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div class="flex flex-col gap-6 md:col-span-2">
+            <a href="index.html" class="inline-block hover:opacity-80 transition-opacity">
+                <img src="assets/images/logo11 (1).png" alt="Time2Result Logo" class="h-14 w-auto object-contain bg-white rounded-lg p-2" onerror="this.onerror=null; this.src='https://placehold.co/200x60/ffffff/004ac6?text=Time2Result';" />
+            </a>
+            <p class="text-slate-400 leading-relaxed max-w-md">
+                Time To Result Solutions provides END to END race timing solutions and event management services in Chennai. 
+            </p>
+            <div class="flex flex-col gap-2 mt-2 font-medium">
+                <p class="flex items-start gap-3"><span class="material-symbols-outlined text-brand-teal">location_on</span><span>1st Floor, 12/1, Sangam School Street,<br/>Venkatapuram, Ambattur, Chennai – 53</span></p>
+                <p class="flex items-center gap-3 mt-2"><span class="material-symbols-outlined text-brand-teal">mail</span><a href="mailto:info@time2result.com" class="hover:text-white transition-colors">info@time2result.com</a></p>
+                <p class="flex items-center gap-3"><span class="material-symbols-outlined text-brand-teal opacity-0">mail</span><a href="mailto:time2resultindia@gmail.com" class="hover:text-white transition-colors">time2resultindia@gmail.com</a></p>
+                <p class="flex items-center gap-3 mt-2"><span class="material-symbols-outlined text-brand-teal">phone</span><a href="tel:+919363024240" class="hover:text-white transition-colors">+91 93630 24240</a> <span class="text-slate-600">/</span> <a href="tel:+918248868900" class="hover:text-white transition-colors">+91 82488 68900</a></p>
+            </div>
+        </div>
+        
+        <div>
+            <h4 class="text-white font-bold text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
+            <div class="flex flex-col gap-4 font-medium">
+                <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="index.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Home</a>
+                <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="events.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Registration / Events</a>
+                <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="result.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Results</a>
+                <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="about.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> About Us</a>
+                <a class="hover:text-brand-teal transition-colors flex items-center gap-2 group" href="services.html"><span class="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span> Services</a>
+            </div>
+        </div>
+
+        <div>
+            <h4 class="text-white font-bold text-lg mb-6 uppercase tracking-wider">Connect With Us</h4>
+            <div class="flex gap-4">
+                <a href="#" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-purple hover:text-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300" title="Facebook">
+                    <span class="material-symbols-outlined">thumb_up</span>
+                </a>
+                <a href="#" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-teal hover:text-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300" title="Whatsapp">
+                    <span class="material-symbols-outlined">chat</span>
+                </a>
+                <a href="#" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-purple hover:text-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300" title="Instagram">
+                    <span class="material-symbols-outlined">photo_camera</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-[1280px] mx-auto px-6 pt-8 border-t border-slate-800 text-center flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-sm">© 2024 Time To Result Solutions. All Rights Reserved.</p>
+        <div class="flex gap-6 text-sm">
+            <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+        </div>
+    </div>
+  </footer>
+
+  <div class="share-modal" id="share-modal" onclick="closeShareModal(event)">
+    <div class="share-content" id="share-content">
+      <button class="close-share" onclick="closeShareModal(event, true)">✕</button>
+      <div class="share-title">Share Your Achievement!</div>
+      <div class="social-grid">
+        <button class="social-btn" onclick="shareTo('whatsapp')">
+          <div class="social-icon icon-wa"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+          <span class="social-label">WhatsApp</span>
+        </button>
+      </div>
+      <div class="copy-link-box">
+        <input type="text" id="share-link-input" value="https://time2result.com/result?bib=1001" readonly>
+        <button onclick="copyShareLink()">Copy</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+function goToPage(url) {
+  const pt = document.getElementById('page-transition');
+  if(pt) { pt.classList.remove('loaded'); pt.style.pointerEvents = 'all'; setTimeout(() => { window.location.href = url; }, 400); } else { window.location.href = url; }
+}
+window.addEventListener('pageshow', () => { const pt = document.getElementById('page-transition'); if(pt) pt.classList.add('loaded'); });
+
+// --- DEMO DATA GENERATION --- 
+const runners = [
+  { id: 1, bib: "1001", event: "Mumbai Marathon 2025", name: "Arjun Sharma", category: "10K Run", gender: "M", age: "30-39", time: "00:34:12", gunTime: "00:34:15", pace: "03:25", splits: [{interval:"5K", time:"00:16:50", pace:"03:22", speed:"17.8"}, {interval:"Finish", time:"00:34:12", pace:"03:25", speed:"17.5"}] },
+  { id: 2, bib: "1045", event: "Mumbai Marathon 2025", name: "Vikram Singh", category: "10K Run", gender: "M", age: "20-29", time: "00:35:05", gunTime: "00:35:08", pace: "03:30", splits: [{interval:"5K", time:"00:17:10", pace:"03:26", speed:"17.4"}, {interval:"Finish", time:"00:35:05", pace:"03:30", speed:"17.1"}] },
+  { id: 3, bib: "1022", event: "Mumbai Marathon 2025", name: "Rahul Deshmukh", category: "10K Run", gender: "M", age: "30-39", time: "00:35:40", gunTime: "00:35:45", pace: "03:34", splits: [{interval:"5K", time:"00:17:35", pace:"03:31", speed:"17.0"}, {interval:"Finish", time:"00:35:40", pace:"03:34", speed:"16.8"}] }
+];
+let activeRunner = null;
+window.onload = () => { runners.sort((a, b) => a.time.localeCompare(b.time)); runners.forEach((r, index) => { r.rank = index + 1; r.genderRank = runners.filter(x => x.event === r.event && x.gender === r.gender && x.time <= r.time).length; }); renderAll(); const pt = document.getElementById('page-transition'); if(pt) pt.classList.add('loaded'); };
+function renderAll() {
+  const eventFilter = document.getElementById('filter-event').value; const catFilter = document.getElementById('filter-category').value; const searchFilter = document.getElementById('filter-bib').value.toLowerCase();
+  let filtered = runners.filter(r => { return r.event === eventFilter && (catFilter === 'All' || r.category === catFilter) && (r.name.toLowerCase().includes(searchFilter) || r.bib.includes(searchFilter)); });
+  filtered.sort((a, b) => a.time.localeCompare(b.time)); renderPodium(filtered); renderTable(filtered);
+  document.getElementById('sidebar-event-title').textContent = eventFilter; document.getElementById('leaderboard-subtitle').textContent = catFilter === 'All' ? 'Overall Top Performers' : `${catFilter} - Top Performers`; closeDetails(); 
+}
+function renderPodium(data) {
+  const container = document.getElementById('podium-container'); container.innerHTML = ''; if(data.length < 3) { container.style.display = 'none'; return; } container.style.display = 'flex';
+  const top3 = [data[0], data[1], data[2]]; const podiumData = [ { ...top3[1], podiumRank: 2, icon: '🥈' }, { ...top3[0], podiumRank: 1, icon: '🥇' }, { ...top3[2], podiumRank: 3, icon: '🥉' } ];
+  podiumData.forEach(r => { const card = document.createElement('div'); card.className = `podium-card rank-${r.podiumRank}`; card.onclick = () => openDetails(r.id); card.innerHTML = `<div class="podium-rank">#${r.podiumRank}</div><div class="medal-icon">${r.icon}</div><div class="podium-name">${r.name}</div><div class="podium-bib">${r.bib}</div><div class="podium-time">${r.time}</div><div style="font-size: 13px; color: var(--text-muted); font-weight:500;">Pace: ${r.pace}</div>`; container.appendChild(card); });
+}
+function renderTable(data) {
+  const tbody = document.getElementById('table-body'); const noRes = document.getElementById('no-results'); tbody.innerHTML = '';
+  if(data.length === 0) { noRes.style.display = 'block'; return; } noRes.style.display = 'none';
+  data.forEach((r, index) => { const tr = document.createElement('tr'); tr.onclick = () => openDetails(r.id); tr.innerHTML = `<td class="td-rank">#${index + 1}</td><td><span class="td-bib">${r.bib}</span></td><td style="font-weight: 700;">${r.name}</td><td style="color: var(--text-muted); font-size:14px;">${r.category}</td><td class="td-time">${r.time}</td><td style="color: var(--text-muted);">${r.pace}/km</td>`; tbody.appendChild(tr); });
+}
+function openDetails(id) {
+  const runner = runners.find(r => r.id === id); if(!runner) return; activeRunner = runner;
+  document.getElementById('det-avatar').innerText = runner.name.charAt(0); document.getElementById('det-name').innerText = runner.name; document.getElementById('det-bib').innerText = `BIB: ${runner.bib}`; document.getElementById('det-cat').innerText = runner.category; document.getElementById('det-gender').innerText = runner.gender === 'M' ? 'Male' : 'Female'; document.getElementById('det-rank').innerText = `#${runner.rank}`; document.getElementById('det-time').innerText = runner.time; document.getElementById('det-pace').innerText = `${runner.pace}`; document.getElementById('det-gender-rank').innerText = `#${runner.genderRank}`; document.getElementById('det-age').innerText = runner.age; document.getElementById('det-gun').innerText = runner.gunTime;
+  const splitTbody = document.getElementById('split-tbody'); splitTbody.innerHTML = ''; runner.splits.forEach(s => { splitTbody.innerHTML += `<tr><td style="font-weight:600;">${s.interval}</td><td>${s.time}</td><td>${s.pace}</td><td>${s.speed}</td></tr>`; });
+  document.getElementById('compare-results-area').classList.remove('active'); document.getElementById('compare-search-input').value = ''; document.getElementById('compare-error').style.display = 'none';
+  const section = document.getElementById('detail-section'); section.classList.add('active'); const firstBtn = document.querySelector('.tab-btn'); switchTab({currentTarget: firstBtn}, 'tab-splits');
+  const y = section.getBoundingClientRect().top + window.scrollY - 180; window.scrollTo({top: y, behavior: 'smooth'});
+}
+function closeDetails() { document.getElementById('detail-section').classList.remove('active'); activeRunner = null; }
+function switchTab(event, tabId) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); event.currentTarget.classList.add('active'); document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); document.getElementById(tabId).classList.add('active'); }
+function doCompare() {
+  const query = document.getElementById('compare-search-input').value.trim().toLowerCase(); const errorMsg = document.getElementById('compare-error'); const resultsArea = document.getElementById('compare-results-area'); if(!query) return; const currentEvent = document.getElementById('filter-event').value;
+  const runnerB = runners.find(r => r.event === currentEvent && (r.bib.toLowerCase() === query || r.name.toLowerCase().includes(query)));
+  if(!runnerB || !activeRunner || runnerB.id === activeRunner.id) { errorMsg.style.display = 'block'; resultsArea.classList.remove('active'); return; }
+  errorMsg.style.display = 'none'; document.getElementById('comp-name-a').innerHTML = `${activeRunner.name} <br><span style="font-size:12px;color:var(--text-muted);font-weight:500;">BIB: ${activeRunner.bib}</span>`; document.getElementById('comp-name-b').innerHTML = `${runnerB.name} <br><span style="font-size:12px;color:var(--text-muted);font-weight:500;">BIB: ${runnerB.bib}</span>`;
+  const tbody = document.getElementById('compare-tbody'); const timeA = activeRunner.time; const timeB = runnerB.time; const aWins = timeA < timeB ? '<span class="vs-badge">Winner</span>' : ''; const bWins = timeB < timeA ? '<span class="vs-badge">Winner</span>' : '';
+  tbody.innerHTML = `<tr><td style="text-align:left; color:var(--text-muted); font-weight:600;">Category</td><td>${activeRunner.category}</td><td>${runnerB.category}</td></tr><tr><td style="text-align:left; color:var(--text-muted); font-weight:600;">Overall Rank</td><td style="font-weight:800;">#${activeRunner.rank}</td><td style="font-weight:800;">#${runnerB.rank}</td></tr><tr style="background:var(--primary-light);"><td style="text-align:left; color:var(--primary); font-weight:800;">Finish Time</td><td style="font-weight:800; color:var(--primary);">${activeRunner.time} ${aWins}</td><td style="font-weight:800; color:var(--text-main);">${runnerB.time} ${bWins}</td></tr><tr><td style="text-align:left; color:var(--text-muted); font-weight:600;">Avg Pace</td><td style="font-weight:600;">${activeRunner.pace}/km</td><td style="font-weight:600;">${runnerB.pace}/km</td></tr>`;
+  activeRunner.splits.forEach(splitA => { const splitB = runnerB.splits.find(s => s.interval === splitA.interval); if(splitB && splitA.interval !== 'Finish') { tbody.innerHTML += `<tr><td style="text-align:left; color:var(--text-muted); font-weight:600;">Split: ${splitA.interval}</td><td>${splitA.time}</td><td>${splitB.time}</td></tr>`; } });
+  resultsArea.classList.add('active');
+}
+function openShareModal() { document.getElementById('share-modal').classList.add('active'); }
+function closeShareModal(event, force=false) { if (force || event.target === document.getElementById('share-modal')) { document.getElementById('share-modal').classList.remove('active'); } }
+function copyShareLink() { const input = document.getElementById('share-link-input'); input.select(); document.execCommand('copy'); const btn = event.target; const originalText = btn.innerText; btn.innerText = 'Copied!'; btn.style.background = '#56BEB4'; setTimeout(() => { btn.innerText = originalText; btn.style.background = 'var(--primary)'; }, 2000); }
+</script>
+</body>
+</html>
